@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _showLoginFields = false; // Pour afficher les champs après l'animation
   GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  final FacebookAuth _facebookAuth = FacebookAuth.instance;
+  //final FacebookAuth _facebookAuth = FacebookAuth.instance;
 
   loginPressed() async {
     String _email = _emailController.text.trim();
@@ -190,6 +190,114 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildLoginFields() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          SizedBox(
+              height: MediaQuery.of(context).size.height *
+                  0.21), // Espace entre le logo et les champs
+          const Text(
+            'Login',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 45, fontWeight: FontWeight.w500, color: Colors.white),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+          _buildTextField(
+              controller: _emailController,
+              hintText: 'Enter your email',
+              icon: Icons.email),
+          const SizedBox(height: 20),
+          _buildTextField(
+              controller: _passwordController,
+              hintText: 'Enter your password',
+              icon: Icons.lock,
+              obscureText: true),
+          const SizedBox(height: 30),
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ElevatedButton(
+                  onPressed: loginPressed,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pink.shade300,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+          const SizedBox(height: 20),
+          TextButton(
+            onPressed: () {},
+            child: const Text(
+              'Forgot your password?',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.07),
+          const Center(
+            child: Text(
+              '_____ Or connect with _____',
+              style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSocialButton(
+                icon: Icons.email,
+                text: 'Google',
+                onPressed: _signInWithGoogle,
+              ),
+              const SizedBox(width: 20),
+              _buildSocialButton(
+                icon: Icons.facebook,
+                text: 'Facebook',
+                onPressed: _signInWithFacebook,
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Don't have an account? "),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterScreen()),
+                  );
+                },
+                child: const Text(
+                  'Register',
+                  style: TextStyle(
+                    color: Color(0xFFE57373),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /*Widget _buildLoginFields() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -290,6 +398,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+*/
 
   Widget _buildTextField(
       {required TextEditingController controller,

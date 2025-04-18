@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   bool _showLogo = false;
-  bool _showCategories = false; // Ajouter cette variable pour les catégories
+  bool _showCategories = false;
   bool _showLoginFields = false;
 
   late AnimationController _animationController;
@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
 
-    // Animation pour les vagues
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -32,32 +31,26 @@ class _HomeScreenState extends State<HomeScreen>
     _waveAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-
-    // Animation pour le logo
     _logoAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    // Démarrer l'animation des vagues et du logo
     Future.delayed(const Duration(seconds: 1), () {
       _animationController.forward();
     });
 
-    // Déclencher l'animation du logo après un délai
     Future.delayed(const Duration(milliseconds: 300), () {
       setState(() {
         _showLogo = true;
       });
     });
 
-    // Affichage des catégories après l'animation du logo
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showCategories = true;
       });
     });
 
-    // Affichage des champs après l'animation des vagues
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showLoginFields = true;
@@ -74,67 +67,67 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TweenAnimationBuilder(
-        tween: Tween<double>(
-            begin: 0.45, end: 0.0), // Animation de la hauteur des vagues
-        duration: const Duration(seconds: 2),
-        onEnd: () {
-          setState(() {
-            _showLoginFields =
-                true; // Afficher les champs après l'animation des vagues
-          });
-        },
-        builder: (context, double waveHeight, child) {
-          return Stack(
-            children: [
-              // Animation des vagues
-              TweenAnimationBuilder(
-                tween: Tween<double>(
-                    begin: 0.0, end: 0.0), // Déplacement des vagues
-                duration: const Duration(seconds: 2),
-                builder: (context, double waveOffset, child) {
-                  return CustomPaint(
-                    size: MediaQuery.of(context).size,
-                    painter: WavePainter(
-                      waveHeight: waveHeight, // Hauteur dynamique de la vague
-                      waveOffset: waveOffset, // Décalage dynamique des vagues
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0.45, end: 0.0),
+              duration: const Duration(seconds: 2),
+              onEnd: () {
+                setState(() {
+                  _showLoginFields = true;
+                });
+              },
+              builder: (context, double waveHeight, child) {
+                return Stack(
+                  children: [
+                    TweenAnimationBuilder(
+                      tween: Tween<double>(begin: 0.0, end: 0.0),
+                      duration: const Duration(seconds: 2),
+                      builder: (context, double waveOffset, child) {
+                        return CustomPaint(
+                          size:
+                              Size(constraints.maxWidth, constraints.maxHeight),
+                          painter: WavePainter(
+                            waveHeight: waveHeight,
+                            waveOffset: waveOffset,
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              // Affichage des "carrés" après l'animation
-              if (_showLoginFields) _buildSquareButtons(),
-              // Logo positionné avec animation
-              AnimatedPositioned(
-                duration: const Duration(seconds: 2),
-                top: 70, // Position du logo
-                left: _showLogo
-                    ? 20 // Déplacement du logo vers la gauche
-                    : MediaQuery.of(context).size.width / 2 -
-                        60, // Centré initialement
-                child: _buildLogo(),
-              ),
-              // Affichage du titre "Catégorie" et des noms "Kids" et "Adult"
-              if (_showCategories)
-                Positioned(
-                  top: 100, // Positionner le titre plus bas
-                  left: MediaQuery.of(context).size.width / 2 - 40,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Catégorie",
-                        style: TextStyle(
-                          fontSize: 41,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    if (_showLoginFields)
+                      _buildSquareButtons(context, constraints),
+                    AnimatedPositioned(
+                      duration: const Duration(seconds: 2),
+                      top: 40,
+                      left: _showLogo
+                          ? 20
+                          : MediaQuery.of(context).size.width / 2 - 60,
+                      child: _buildLogo(),
+                    ),
+                    if (_showCategories)
+                      Positioned(
+                        top: 70,
+                        left: MediaQuery.of(context).size.width / 2 - 40,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Category",
+                              style: TextStyle(
+                                fontSize: 41,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-            ],
-          );
-        },
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -177,38 +170,35 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildVerticalBar(double offsetX, double topHeight,
       double bottomHeight, Color topColor, Color bottomColor, bool isAttached) {
     return Positioned(
-      left: 57 + offsetX, // Position horizontale de la barre
+      left: 57 + offsetX,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Centrer la colonne
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Partie supérieure de la barre
           Container(
             width: 10,
-            height: topHeight, // Hauteur de la barre supérieure
+            height: topHeight,
             decoration: BoxDecoration(
-              color: topColor, // Couleur de la barre
-              borderRadius: BorderRadius.circular(5), // Coins arrondis
+              color: topColor,
+              borderRadius: BorderRadius.circular(5),
             ),
           ),
-          // Partie inférieure de la barre (si attachée)
           isAttached
               ? Container(
                   width: 10,
-                  height: bottomHeight, // Hauteur de la barre inférieure
+                  height: bottomHeight,
                   decoration: BoxDecoration(
-                    color: bottomColor, // Couleur de la barre inférieure
-                    borderRadius: BorderRadius.circular(5), // Coins arrondis
+                    color: bottomColor,
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 )
-              : SizedBox(height: 5), // Espacement si non attachée
-          // Partie inférieure de la barre (si non attachée)
+              : SizedBox(height: 5),
           if (!isAttached)
             Container(
               width: 10,
-              height: bottomHeight, // Hauteur de la barre inférieure
+              height: bottomHeight,
               decoration: BoxDecoration(
-                color: bottomColor, // Couleur de la barre inférieure
-                borderRadius: BorderRadius.circular(5), // Coins arrondis
+                color: bottomColor,
+                borderRadius: BorderRadius.circular(5),
               ),
             ),
         ],
@@ -216,10 +206,10 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildCategoryButton(String title) {
+  Widget _buildCategoryButton(String title, BoxConstraints constraints) {
     return Container(
-      width: 200,
-      height: 50,
+      width: constraints.maxWidth * 0.4,
+      height: constraints.maxHeight * 0.06,
       decoration: BoxDecoration(
         color: Colors.pink.shade300,
         borderRadius: BorderRadius.circular(12),
@@ -227,131 +217,214 @@ class _HomeScreenState extends State<HomeScreen>
       child: Center(
         child: Text(
           title,
-          style: TextStyle(color: Colors.white, fontSize: 20),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: constraints.maxWidth * 0.05,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSquareButtons() {
+  Widget _buildSquareButtons(BuildContext context, BoxConstraints constraints) {
+    final buttonSize = constraints.maxWidth * 0.3;
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          children: [
-            SizedBox(height: 100),
-            // Texte explicatif
-            Text(
-              'Choose your category to start improving your accent:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 30),
-
-            // Texte détaillé sur les catégories
-            RichText(
-              text: TextSpan(
-                style: TextStyle(fontSize: 19, color: Colors.black87),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: constraints.maxWidth * 0.05,
+            vertical: constraints.maxHeight * 0.02,
+          ),
+          child: OrientationBuilder(
+            builder: (context, orientation) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextSpan(
-                    text: 'Young Explorers : ',
+                  SizedBox(height: constraints.maxHeight * 0.15),
+                  Text(
+                    'Choose your category to start improving your accent:',
                     style: TextStyle(
+                      fontSize: constraints.maxWidth * 0.045,
                       fontWeight: FontWeight.bold,
-                      color: Colors.pink,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: constraints.maxHeight * 0.03),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: constraints.maxWidth * 0.04,
+                        color: Colors.black87,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Young Explorers : ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pink,
+                          ),
+                        ),
+                        const TextSpan(
+                          text:
+                              'This category is for beginners who want to explore the basics of the English accent.\n\n',
+                        ),
+                        TextSpan(
+                          text: 'Advanced Learners : ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pink,
+                          ),
+                        ),
+                        const TextSpan(
+                          text:
+                              'This category is for those who want to perfect their accent with advanced exercises.',
+                        ),
+                      ],
                     ),
                   ),
-                  const TextSpan(
-                    text:
-                        'This category is for beginners who want to explore the basics of the English accent.\n\n',
-                  ),
-                  TextSpan(
-                    text: 'Advanced Learners : ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.pink,
-                    ),
-                  ),
-                  const TextSpan(
-                    text:
-                        'This category is for those who want to perfect their accent with advanced exercises.',
-                  ),
+                  SizedBox(height: constraints.maxHeight * 0.05),
+                  orientation == Orientation.portrait
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              young_screen.YoungExplorersPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: _buildSquareButton(
+                                        'assets/kids.jpg', buttonSize),
+                                  ),
+                                  SizedBox(
+                                      height: constraints.maxHeight * 0.01),
+                                  Text(
+                                    "Young",
+                                    style: TextStyle(
+                                      fontSize: constraints.maxWidth * 0.05,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: constraints.maxWidth * 0.05),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => advances_screen
+                                              .AdvancedLearnersPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: _buildSquareButton(
+                                        'assets/adults1.jpg', buttonSize),
+                                  ),
+                                  SizedBox(
+                                      height: constraints.maxHeight * 0.01),
+                                  Text(
+                                    "Advanced",
+                                    style: TextStyle(
+                                      fontSize: constraints.maxWidth * 0.05,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => young_screen
+                                                .YoungExplorersPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: _buildSquareButton(
+                                          'assets/kids.jpg', buttonSize),
+                                    ),
+                                    SizedBox(
+                                        height: constraints.maxHeight * 0.01),
+                                    Text(
+                                      "Young Explorers",
+                                      style: TextStyle(
+                                        fontSize: constraints.maxWidth * 0.05,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: constraints.maxWidth * 0.05),
+                                Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                advances_screen
+                                                    .AdvancedLearnersPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: _buildSquareButton(
+                                          'assets/adults1.jpg', buttonSize),
+                                    ),
+                                    SizedBox(
+                                        height: constraints.maxHeight * 0.01),
+                                    Text(
+                                      "Advanced Learners",
+                                      style: TextStyle(
+                                        fontSize: constraints.maxWidth * 0.05,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                 ],
-              ),
-            ),
-
-            SizedBox(height: 75),
-
-            // Boutons pour les catégories
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  young_screen.YoungExplorersPage(),
-                            ),
-                          );
-                        },
-                        child: _buildSquareButton('assets/kids.jpg'),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Young Explorers",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 20), // Espacement entre les deux catégories
-                Expanded(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  advances_screen.AdvancedLearnersPage(),
-                            ),
-                          );
-                        },
-                        child: _buildSquareButton('assets/adults1.jpg'),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Advanced Learners",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSquareButton(String imagePath) {
+  Widget _buildSquareButton(String imagePath, double size) {
     return Container(
-      width: 120,
-      height: 120,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -379,7 +452,6 @@ class WavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Peinture pour la vague rose
     Paint pinkPaint = Paint()
       ..shader = LinearGradient(
         colors: [
@@ -392,7 +464,6 @@ class WavePainter extends CustomPainter {
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
-    // Peinture pour la vague violette
     Paint purplePaint = Paint()
       ..shader = LinearGradient(
         colors: [
@@ -404,7 +475,6 @@ class WavePainter extends CustomPainter {
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
-    // 🔼 Vague rose - Plus haute en diminuant waveHeight
     Path pinkPath = Path();
     pinkPath.moveTo(0, size.height * (waveHeight + 0.25) + waveOffset);
     pinkPath.quadraticBezierTo(
@@ -421,7 +491,6 @@ class WavePainter extends CustomPainter {
     pinkPath.lineTo(0, 0);
     pinkPath.close();
 
-    // 🔼 Vague violette - Plus haute aussi
     Path purplePath = Path();
     purplePath.moveTo(0, size.height * (waveHeight + 0.22) + waveOffset);
     purplePath.quadraticBezierTo(
@@ -438,9 +507,8 @@ class WavePainter extends CustomPainter {
     purplePath.lineTo(0, 0);
     purplePath.close();
 
-    // Dessiner les vagues
-    canvas.drawPath(purplePath, purplePaint); // Vague violette
-    canvas.drawPath(pinkPath, pinkPaint); // Vague rose
+    canvas.drawPath(purplePath, purplePaint);
+    canvas.drawPath(pinkPath, pinkPaint);
   }
 
   @override
@@ -448,27 +516,3 @@ class WavePainter extends CustomPainter {
     return true;
   }
 }
-
-
-
-
-
-
-
-
-/*import 'package:flutter/material.dart';
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.blue,
-      body: Center(
-        child: Text('Home Screen'),
-      ),
-    );
-  }
-}
-*/

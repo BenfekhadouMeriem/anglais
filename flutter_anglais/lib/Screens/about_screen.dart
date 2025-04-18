@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'accueil_screen.dart';
+//import 'accueil_screen.dart';
+import 'main_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({Key? key}) : super(key: key);
@@ -8,177 +9,206 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          CustomPaint(
-            size: MediaQuery.of(context).size,
-            painter: WavePainter(),
-          ),
-          // Affichage des boutons
-          _buildSquareButtons(context),
-          // Logo
-          Positioned(
-            top: 70,
-            left: 20,
-            child: _buildLogo(),
-          ),
-          // Affichage du titre "Catégorie"
-          Positioned(
-            top: 100,
-            left: MediaQuery.of(context).size.width / 2 - 40,
-            child: Column(
-              children: const [
-                Text(
-                  "About Us",
-                  style: TextStyle(
-                    fontSize: 41,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSquareButtons(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Aligner le titre à gauche
-        children: [
-          const SizedBox(height: 200), // Espace avant le titre
-
-          // Titre "Tutorial" en noir et souligné en rose
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16.0), // Décalage à gauche
-            child: Text(
-              "Description",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                decoration: TextDecoration.underline,
-                decorationColor: const Color.fromARGB(255, 241, 107, 151),
-              ),
-            ),
-          ),
-
-          /*ici disception*/
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 24), // Espacement à gauche et à droite
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Alignement à gauche
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
               children: [
-                SizedBox(height: 30), // Espacement en haut
-
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16), // Padding interne
-                  child: _styledText(
-                      "Welcome to ", "AccentFlow!", Colors.pink, null, 22),
+                CustomPaint(
+                  size: Size(constraints.maxWidth, constraints.maxHeight),
+                  painter: WavePainter(),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _styledText("Ready to ", "join us", Colors.purple,
-                      " in transforming your ", 20),
+                Positioned.fill(
+                  child: _buildSquareButtons(context, constraints),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child:
-                      _styledText("English", " accent?", Colors.pink, null, 20),
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: _buildLogo(),
                 ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "This journey will be fun, interactive, and effective!",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                ),
-
-                SizedBox(height: 20),
-
-                // Listes avec padding
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _listItem(
-                      "Podcasts",
-                      "Dive into engaging ",
-                      "audio",
-                      Colors.pink,
-                      " content to sharpen your listening skills.",
-                      18),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _listItem("Videos", "Watch and learn with ", "visuals",
-                      Colors.pink, " to guide your practice.", 18),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _listItem(
-                      "Shadowing Practice",
-                      "Start following along and perfect your ",
-                      "pronunciation.",
-                      Colors.pink,
-                      null,
-                      18),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _listItem(
-                      "Your Friend,",
-                      " Amy -",
-                      " SmartHelper",
-                      Colors.purple,
-                      " is here to answer any questions you have.",
-                      18),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _styledText(
-                      "All your progress and information will be ",
-                      "securely saved.",
-                      Colors.pink,
-                      null,
-                      18),
-                ),
-
-                SizedBox(height: 70), // Espacement en bas
-                // Texte "Skip" centré
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AccueilScreen(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Skip',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.pink, // Couleur du texte "Skip"
-                      ),
+                Positioned(
+                  top: 70,
+                  left: constraints.maxWidth / 2 - 40,
+                  child: const Text(
+                    "Tutorial",
+                    style: TextStyle(
+                      fontSize: 41,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ],
-            ),
-          )
-        ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSquareButtons(BuildContext context, BoxConstraints constraints) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Center(
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: constraints.maxWidth * 0.04),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: constraints.maxHeight * 0.25),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: constraints.maxWidth * 0.04),
+                child: Text(
+                  "Description",
+                  style: TextStyle(
+                    fontSize: constraints.maxWidth * 0.06,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    decoration: TextDecoration.underline,
+                    decorationColor: const Color.fromARGB(255, 241, 107, 151),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: constraints.maxWidth * 0.06),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: constraints.maxHeight * 0.03),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _styledText(
+                        "Welcome to ",
+                        "AccentFlow!",
+                        Colors.pink,
+                        null,
+                        constraints.maxWidth * 0.055,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _styledText(
+                        "Ready to ",
+                        "join us",
+                        Colors.purple,
+                        " in transforming your",
+                        constraints.maxWidth * 0.05,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _styledText(
+                        "English",
+                        " accent?",
+                        Colors.pink,
+                        null,
+                        constraints.maxWidth * 0.05,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: Text(
+                        "This journey will be fun, interactive, and effective!",
+                        style: TextStyle(
+                          fontSize: constraints.maxWidth * 0.045,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _listItem(
+                        "Podcasts",
+                        "Dive into engaging ",
+                        "audio",
+                        Colors.pink,
+                        " content to sharpen your listening skills.",
+                        constraints.maxWidth * 0.045,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _listItem(
+                        "Videos",
+                        "Watch and learn with ",
+                        "visuals",
+                        Colors.pink,
+                        " to guide your practice.",
+                        constraints.maxWidth * 0.045,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _listItem(
+                        "Shadowing Practice",
+                        "Start following along and perfect your ",
+                        "pronunciation.",
+                        Colors.pink,
+                        null,
+                        constraints.maxWidth * 0.045,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _listItem(
+                        "Your Friend,",
+                        " Amy -",
+                        "SmartHelper",
+                        Colors.purple,
+                        " is here to answer any questions you have.",
+                        constraints.maxWidth * 0.045,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth * 0.04),
+                      child: _styledText(
+                        "All your progress and information will be ",
+                        "securely saved.",
+                        Colors.pink,
+                        null,
+                        constraints.maxWidth * 0.045,
+                      ),
+                    ),
+                    SizedBox(height: constraints.maxHeight * 0.03),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Skip',
+                          style: TextStyle(
+                            fontSize: constraints.maxWidth * 0.04,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pink,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -262,6 +292,44 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildButtonWithLabel(String label, String assetPath, double size) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {},
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  assetPath,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  width: size,
+                  height: size,
+                  color: Colors.black.withOpacity(0.3),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: size * 0.1,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: size * 0.05),
+      ],
+    );
+  }
+
   Widget _buildLogo() {
     return Container(
       width: 120,
@@ -300,38 +368,35 @@ class AboutScreen extends StatelessWidget {
   Widget _buildVerticalBar(double offsetX, double topHeight,
       double bottomHeight, Color topColor, Color bottomColor, bool isAttached) {
     return Positioned(
-      left: 57 + offsetX, // Position horizontale de la barre
+      left: 57 + offsetX,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Centrer la colonne
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Partie supérieure de la barre
           Container(
             width: 10,
-            height: topHeight, // Hauteur de la barre supérieure
+            height: topHeight,
             decoration: BoxDecoration(
-              color: topColor, // Couleur de la barre
-              borderRadius: BorderRadius.circular(5), // Coins arrondis
+              color: topColor,
+              borderRadius: BorderRadius.circular(5),
             ),
           ),
-          // Partie inférieure de la barre (si attachée)
           isAttached
               ? Container(
                   width: 10,
-                  height: bottomHeight, // Hauteur de la barre inférieure
+                  height: bottomHeight,
                   decoration: BoxDecoration(
-                    color: bottomColor, // Couleur de la barre inférieure
-                    borderRadius: BorderRadius.circular(5), // Coins arrondis
+                    color: bottomColor,
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 )
-              : SizedBox(height: 5), // Espacement si non attachée
-          // Partie inférieure de la barre (si non attachée)
+              : SizedBox(height: 5),
           if (!isAttached)
             Container(
               width: 10,
-              height: bottomHeight, // Hauteur de la barre inférieure
+              height: bottomHeight,
               decoration: BoxDecoration(
-                color: bottomColor, // Couleur de la barre inférieure
-                borderRadius: BorderRadius.circular(5), // Coins arrondis
+                color: bottomColor,
+                borderRadius: BorderRadius.circular(5),
               ),
             ),
         ],
@@ -343,34 +408,28 @@ class AboutScreen extends StatelessWidget {
 class WavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    // Peinture pour la vague rose
     Paint pinkPaint = Paint()
       ..shader = LinearGradient(
         colors: [
           Colors.pink.shade300,
           Colors.pink.shade200,
-          Colors.pink.shade100,
+          Colors.pink.shade100
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
-    // Peinture pour la vague violette
     Paint purplePaint = Paint()
       ..shader = LinearGradient(
-        colors: [
-          Colors.purple.shade200,
-          Colors.purple.shade100,
-        ],
+        colors: [Colors.purple.shade200, Colors.purple.shade100],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
-    // Vague rose (un peu plus descendue)
     Path pinkPath = Path();
-    pinkPath.moveTo(0, size.height * 0.25); // Descente un peu plus profonde
+    pinkPath.moveTo(0, size.height * 0.25);
     pinkPath.quadraticBezierTo(size.width * 0.2, size.height * 0.2,
         size.width * 0.5, size.height * 0.24);
     pinkPath.quadraticBezierTo(
@@ -379,10 +438,9 @@ class WavePainter extends CustomPainter {
     pinkPath.lineTo(0, 0);
     pinkPath.close();
 
-    // Vague violette (un peu plus descendue)
     Path purplePath = Path();
-    purplePath.moveTo(0, size.height * 0.25); // Descente un peu plus profonde
-    purplePath.quadraticBezierTo(size.width * 0, size.height * 0.2,
+    purplePath.moveTo(0, size.height * 0.25);
+    purplePath.quadraticBezierTo(size.width * 0.0, size.height * 0.2,
         size.width * 0.4, size.height * 0.25);
     purplePath.quadraticBezierTo(
         size.width * 0.85, size.height * 0.3, size.width, size.height * 0.2);
@@ -390,13 +448,10 @@ class WavePainter extends CustomPainter {
     purplePath.lineTo(0, 0);
     purplePath.close();
 
-    // Dessiner les vagues
-    canvas.drawPath(purplePath, purplePaint); // Vague violette
-    canvas.drawPath(pinkPath, pinkPaint); // Vague rose
+    canvas.drawPath(purplePath, purplePaint);
+    canvas.drawPath(pinkPath, pinkPaint);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
